@@ -13,20 +13,28 @@ def app_sidebar():
     petal_width = st.sidebar.text_input("Petal Width (cm)", placeholder="e.g. 0.2")
 
     def get_input_features():
-        input_features = {
-            'sepal_length': float(sepal_length),
-            'sepal_width': float(sepal_width),
-            'petal_length': float(petal_length),
-            'petal_width': float(petal_width),
-        }
-        return input_features
+        if not all([sepal_length, sepal_width, petal_length, petal_width]):
+            return None
+        try:
+            return {
+                'sepal_length': float(sepal_length),
+                'sepal_width': float(sepal_width),
+                'petal_length': float(petal_length),
+                'petal_width': float(petal_width),
+            }
+        except ValueError:
+            return None
     sdb_col1, sdb_col2 = st.sidebar.columns(2)
     with sdb_col1:
         predict_button = st.sidebar.button("Predict", key="predict")
     with sdb_col2:
         reset_button = st.sidebar.button("Reset", key="clear")
     if predict_button:
-        st.session_state['input_features'] = get_input_features()
+        input_features = get_input_features()
+        if input_features is None:
+            st.sidebar.error("Please enter valid numeric values for all Iris features.")
+        else:
+            st.session_state['input_features'] = input_features
     if reset_button:
         st.session_state['input_features'] = {}
     return None
@@ -35,7 +43,8 @@ def app_body():
     title = '<p style="font-family:arial, sans-serif; color:Black; font-size: 40px;"><b>Iris Setosa Prediction</b></p>'
     st.markdown(title, unsafe_allow_html=True)
     default_msg = '**Prediction result:** {}'
-    if st.session_state['input_features']:
+    required_keys = ['sepal_length', 'sepal_width', 'petal_length', 'petal_width']
+    if all(key in st.session_state['input_features'] for key in required_keys):
         assessment = get_prediction(
             sepal_length=st.session_state['input_features']['sepal_length'],
             sepal_width=st.session_state['input_features']['sepal_width'],
