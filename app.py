@@ -6,23 +6,23 @@ if 'input_features' not in st.session_state:
     st.session_state['input_features'] = {}
 
 def app_sidebar():
-    st.sidebar.header('Applicant')
-    dep = st.sidebar.text_input("No. of Dependents")
-    ln_amt = st.sidebar.text_input("Loan Amount '000s", placeholder="in '000s")
-    ln_tm = st.sidebar.text_input("Loan Term")
-    cbl = st.sidebar.text_input("CIBIL Score (300-900)")
-    rav = st.sidebar.text_input("Residential Assets Value '000s", placeholder="in '000s")
+    st.sidebar.header('Iris Sample Inputs')
+    sepal_length = st.sidebar.text_input("Sepal Length (cm)", placeholder="e.g. 5.1")
+    sepal_width = st.sidebar.text_input("Sepal Width (cm)", placeholder="e.g. 3.5")
+    petal_length = st.sidebar.text_input("Petal Length (cm)", placeholder="e.g. 1.4")
+    petal_width = st.sidebar.text_input("Petal Width (cm)", placeholder="e.g. 0.2")
+
     def get_input_features():
-        input_features = {'dep': int(dep),
-                          'ln_amt': int(ln_amt),
-                          'ln_tm': int(ln_tm),
-                          'cbl': int(cbl),
-                          'rav': int(rav)*1000
-                         }
+        input_features = {
+            'sepal_length': float(sepal_length),
+            'sepal_width': float(sepal_width),
+            'petal_length': float(petal_length),
+            'petal_width': float(petal_width),
+        }
         return input_features
     sdb_col1, sdb_col2 = st.sidebar.columns(2)
     with sdb_col1:
-        predict_button = st.sidebar.button("Assess", key="predict")
+        predict_button = st.sidebar.button("Predict", key="predict")
     with sdb_col2:
         reset_button = st.sidebar.button("Reset", key="clear")
     if predict_button:
@@ -32,19 +32,20 @@ def app_sidebar():
     return None
 
 def app_body():
-    title = '<p style="font-family:arial, sans-serif; color:Black; font-size: 40px;"><b> Welcome to DSSI Loan Assessment</b></p>'
+    title = '<p style="font-family:arial, sans-serif; color:Black; font-size: 40px;"><b>Iris Setosa Prediction</b></p>'
     st.markdown(title, unsafe_allow_html=True)
-    default_msg = '**System assessment says:** {}'
+    default_msg = '**Prediction result:** {}'
     if st.session_state['input_features']:
-        assessment = get_prediction(no_of_dependents=st.session_state['input_features']['dep'],
-                                    loan_amount=st.session_state['input_features']['ln_amt'],
-                                    loan_term=st.session_state['input_features']['ln_tm'],
-                                    cibil_score=st.session_state['input_features']['cbl'],
-                                    residential_assets_value=st.session_state['input_features']['rav'])
+        assessment = get_prediction(
+            sepal_length=st.session_state['input_features']['sepal_length'],
+            sepal_width=st.session_state['input_features']['sepal_width'],
+            petal_length=st.session_state['input_features']['petal_length'],
+            petal_width=st.session_state['input_features']['petal_width'],
+        )
         if assessment == 1:
-            st.success(default_msg.format('Approved'))
+            st.success(default_msg.format('Iris Setosa'))
         else:
-            st.warning(default_msg.format('Rejected'))
+            st.warning(default_msg.format('Not Iris Setosa'))
     return None
 
 def main():

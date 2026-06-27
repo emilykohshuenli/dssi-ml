@@ -1,0 +1,11 @@
+{
+    "name": "iris",
+    "metrics": {
+        "fdr": 0.0,
+        "recall": 1.0
+    },
+    "version": 1,
+    "registration_date": "2026-06-27T14:55:32.524126",
+    "model": "iris_model_v1.joblib",
+    "features": "iris_features_v1.joblib"
+}
